@@ -12,6 +12,8 @@ fn main() {
     let sortof = "This digit is in the number, but not in the right place";
     let incorrect = "This digit is not in the number.";
 
+    let mut tries = 0;
+
     loop {
         print!("Input your guess: ");
         io::stdout().flush().unwrap(); // Stdout has a buffer, so this the above print won't display without flushing
@@ -27,6 +29,8 @@ fn main() {
             Err(_) => continue,
         };
 
+        tries += 1; // Increments the number of guesses the user put in
+
         for i in (0..6).rev() {
             // Isolates one digit from each number
             let rand_digit = rand_number / u32::pow(10, i) % 10;
@@ -35,13 +39,33 @@ fn main() {
             if rand_digit == input_digit {
                 println!("{} <-- {}", input_digit, correct);
             }
+            else
+            {
+                // Checks if the input digit is at least present in the number
+                for j in 0..6 {
+                    // Isolates one digit from each number
+                    let rand_digit = rand_number / u32::pow(10, j) % 10;
+                    if rand_digit == input_digit {
+                        println!("{} <-- {}", input_digit, sortof);
+                        break;
+                    }
+
+                    // If no match found anywhere in the random number
+                    if j == 5 {
+                        println!("{} <-- {}", input_digit, incorrect);
+                    }
+                }
+
+            }
 
         }
 
-        println!("Random number: {}", rand_number);
+        // For debug purposes
+        // println!("Random number: {}", rand_number);
 
         if input == rand_number {
             println!("Congratulations! You guessed the right number. You won!");
+            println!("It took you {} tries to guess the right number.", tries);
             break;
         }
     }
